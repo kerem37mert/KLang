@@ -135,9 +135,28 @@ void skipWhiteSpace()
         {
             case ' ':
             case '\t':
+            case '\r':
             case '\n':
                 advance();
                 break;
+
+            // COMMENTS LINES
+            case '/':
+                if (peekNext() == '/')
+                {
+                    while (peek() != '\n' && !isAtEnd())
+                        advance();
+                    skipWhiteSpace();
+                }
+                else if (peekNext() == '*')
+                {
+                    while (!(peek() == '*' && peekNext() == '/') && !isAtEnd())
+                    {
+                        advance();
+                    }
+                    lexer->position += 2;
+                    skipWhiteSpace();
+                }
 
             default:
                 return;
@@ -171,4 +190,11 @@ char advance()
 char peek()
 {
     return lexer->source[lexer->position];
+}
+
+char peekNext()
+{
+    if (isAtEnd())
+        return '\0';
+    return lexer->source[lexer->position + 1];
 }

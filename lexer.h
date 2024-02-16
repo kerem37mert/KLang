@@ -5,7 +5,8 @@
 #ifndef KLANG_LEXER_H
 #define KLANG_LEXER_H
 
-enum TokenType {
+enum TokenType
+{
     PLUS,               // +
     MINUS,              // -
     MULTIPLY,           // *
@@ -56,13 +57,15 @@ enum TokenType {
     EOF_TOKEN
 };
 
-struct Token{
+struct Token
+{
     enum TokenType type;
     char* value;
     struct Token* next;
-} ;
+};
 
-struct Lexer {
+struct Lexer
+{
     char* source;
     int position;
 };
@@ -89,5 +92,7 @@ int isAtEnd();
 char advance();
 
 char peek();
+
+char peekNext();
 
 #endif //KLANG_LEXER_H
