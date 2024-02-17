@@ -101,6 +101,8 @@ struct Token* scanToken()
             if(match('='))
                 return makeToken(EQUAL_EQUAL, "==", NULL);
             return makeToken(EQUAL, "=", NULL);
+        case '"':
+            return stringLiteral();
     }
 }
 
@@ -124,6 +126,28 @@ struct Token* getLastToken(struct Token *token)
     return token;
 }
 
+struct Token* stringLiteral()
+{
+    char *str = (char *)malloc(1);
+    str[0] = '\0';
+
+    while(peek() != '"' && !isAtEnd())
+    {
+        size_t len = strlen(str);
+        str = (char *)realloc(str, len + 2);
+        str[len] = peek();
+        str[len + 1] = '\0';
+        advance();
+    }
+
+    //ERROR
+    if (isAtEnd())
+        return makeToken(ERROR,"Unterminated string.",NULL);
+
+    advance();
+    return makeToken(STRING_LITERAL, str, NULL);
+}
+
 
 void skipWhiteSpace()
 {
@@ -142,15 +166,15 @@ void skipWhiteSpace()
 
             // COMMENTS LINES
             case '/':
-                if (peekNext() == '/')
+                if(peekNext() == '/')
                 {
-                    while (peek() != '\n' && !isAtEnd())
+                    while(peek() != '\n' && !isAtEnd())
                         advance();
                     skipWhiteSpace();
                 }
                 else if (peekNext() == '*')
                 {
-                    while (!(peek() == '*' && peekNext() == '/') && !isAtEnd())
+                    while(!(peek() == '*' && peekNext() == '/') && !isAtEnd())
                     {
                         advance();
                     }
@@ -167,7 +191,7 @@ void skipWhiteSpace()
 
 int match(char c)
 {
-    if (isAtEnd() || lexer->source[lexer->position] != c)
+    if(isAtEnd() || lexer->source[lexer->position] != c)
         return 0;
 
     lexer->position++;

@@ -54,6 +54,7 @@ enum TokenType
     FUNCTION,
     END_FUNCTION,
 
+    ERROR,
     EOF_TOKEN
 };
 
@@ -82,6 +83,8 @@ struct Token* scanToken();
 struct Token* makeToken(enum TokenType type, char *value, struct Token *next);
 
 struct Token* getLastToken(struct Token *token);
+
+struct Token* stringLiteral();
 
 void skipWhiteSpace();
 
