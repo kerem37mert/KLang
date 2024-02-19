@@ -36,9 +36,9 @@ enum TokenType
     DIVIDE_EQUAL,       // /=
     PLUS_PLUS,          // ++
     MINUS_MINUS,        // --
-    MULTIPLY_MULTIPLY,   // **
+    MULTIPLY_MULTIPLY,  // **
 
-    STRING_LITERAL,
+    STRING_LITERAL,     // "..."
     IDENTIFIER,
     NUMBER_LITERAL,
     CHAR_LITERAL,
@@ -49,10 +49,15 @@ enum TokenType
     END_IF,
     FOR,
     END_FOR,
+    WHILE,
+    END_WHILE,
+    VAR,
     CLASS,
     END_CLASS,
     FUNCTION,
     END_FUNCTION,
+    TRUE,
+    FALSE,
 
     ERROR,
     EOF_TOKEN
@@ -86,11 +91,19 @@ struct Token* getLastToken(struct Token *token);
 
 struct Token* stringLiteral();
 
+struct Token* identifierLiteral(char c);
+
+struct Token* numberLiteral(char c);
+
 void skipWhiteSpace();
 
 int match(char c);
 
 int isAtEnd();
+
+int isAlpha(char c);
+
+int isDigit(char c);
 
 char advance();
 

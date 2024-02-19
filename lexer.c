@@ -103,6 +103,13 @@ struct Token* scanToken()
             return makeToken(EQUAL, "=", NULL);
         case '"':
             return stringLiteral();
+        default:
+            if(isAlpha(c))
+                return identifierLiteral(c);
+            else if(isDigit(c))
+                return numberLiteral(c);
+
+            return makeToken(ERROR, "Unexpected character", NULL);
     }
 }
 
@@ -148,6 +155,62 @@ struct Token* stringLiteral()
     return makeToken(STRING_LITERAL, str, NULL);
 }
 
+
+struct Token* identifierLiteral(char c)
+{
+    char *lexeme = (char *)malloc(2);
+    lexeme[0] = c;
+    lexeme[1] = '\0';
+
+    while(isAlpha(peek()) || isDigit(peek()))
+    {
+        size_t len = strlen(lexeme);
+        lexeme = (char *)realloc(lexeme, len + 2);
+        lexeme[len] = peek();
+        lexeme[len + 1] = '\0';
+        advance();
+    }
+
+    if(strcmp(lexeme, "class") == 0)
+        return makeToken(CLASS, "class", NULL);
+    if(strcmp(lexeme, "endclass") == 0)
+        return makeToken(END_CLASS, "endclass", NULL);
+    if(strcmp(lexeme, "if") == 0)
+        return makeToken(IF, "if", NULL);
+    if(strcmp(lexeme, "else") == 0)
+        return makeToken(ELSE, "else", NULL);
+    if(strcmp(lexeme, "elseif") == 0)
+        return makeToken(ELSEIF, "elseif", NULL);
+    if(strcmp(lexeme, "endif") == 0)
+        return makeToken(END_IF, "endif", NULL);
+    if(strcmp(lexeme, "function") == 0)
+        return makeToken(FUNCTION, "function", NULL);
+    if(strcmp(lexeme, "endfunction") == 0)
+        return makeToken(END_FUNCTION, "endfunction", NULL);
+    if(strcmp(lexeme, "for") == 0)
+        return makeToken(FOR, "for", NULL);
+    if(strcmp(lexeme, "endfor") == 0)
+        return makeToken(END_FOR, "endfor", NULL);
+    if(strcmp(lexeme, "while") == 0)
+        return makeToken(WHILE, "while", NULL);
+    if(strcmp(lexeme, "endwhile") == 0)
+        return makeToken(END_WHILE, "endwhile", NULL);
+    if(strcmp(lexeme, "var") == 0)
+        return makeToken(VAR, "var", NULL);
+    if(strcmp(lexeme, "true") == 0)
+        return makeToken(TRUE, "true", NULL);
+    if(strcmp(lexeme, "false") == 0)
+        return makeToken(FALSE, "false", NULL);
+
+
+    return makeToken(IDENTIFIER, lexeme, NULL);
+}
+
+
+struct Token* numberLiteral(char c)
+{
+    return makeToken(EQUAL, NULL ,NULL);
+}
 
 void skipWhiteSpace()
 {
@@ -202,6 +265,17 @@ int match(char c)
 int isAtEnd()
 {
     return lexer->position == strlen(lexer->source);
+}
+
+
+int isAlpha(char c)
+{
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+}
+
+int isDigit(char c)
+{
+    return c >= '0' && c <= '9';
 }
 
 
