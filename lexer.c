@@ -209,7 +209,37 @@ struct Token* identifierLiteral(char c)
 
 struct Token* numberLiteral(char c)
 {
-    return makeToken(EQUAL, NULL ,NULL);
+    char *number = (char *)malloc(2);
+    number[0] = c;
+    number[1] = '\0';
+
+    while(isDigit(peek()) || isDigit(peek()))
+    {
+        size_t len = strlen(number);
+        number = (char *)realloc(number, len + 2);
+        number[len] = peek();
+        number[len + 1] = '\0';
+        advance();
+    }
+
+    if(match('.'))
+    {
+        size_t len = strlen(number);
+        number = (char *)realloc(number, len + 2);
+        number[len] = '.';
+        number[len + 1] = '\0';
+
+        while(isDigit(peek()) || isDigit(peek()))
+        {
+            size_t len = strlen(number);
+            number = (char *)realloc(number, len + 2);
+            number[len] = peek();
+            number[len + 1] = '\0';
+            advance();
+        }
+    }
+
+    return makeToken(NUMBER_LITERAL, number ,NULL);
 }
 
 void skipWhiteSpace()
@@ -227,7 +257,7 @@ void skipWhiteSpace()
                 advance();
                 break;
 
-            // COMMENTS LINES
+                // COMMENTS LINES
             case '/':
                 if(peekNext() == '/')
                 {
